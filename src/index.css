@@ -21,3 +21,17 @@ body {
   padding: 50px;
   height: calc(100vh - 164px);
 }
+.login-page__container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  background-color: #c5c4c4;
+  padding: 0 10px;
+}
+
+.login-form_container {
+  padding: 4em;
+  margin-top: 10vw;
+  background-color: #fff;
+}
