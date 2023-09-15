@@ -1,30 +1,42 @@
-import React from "react";
-import {Layout, Menu, Space} from 'antd';
+import React, {useState} from "react";
+import {Layout, Menu, MenuProps, Avatar} from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import {Link} from "react-router-dom";
-import "./Header.css"
 const { Header } = Layout;
 
-
 const HeaderComponent:React.FC = () => {
+    const [isUserLoggedIn, setUserLoggedIn] = useState(false);
+
+    const menuItems: MenuProps['items']  = [
+        {
+            label: <Link to="/">Home</Link>,
+            key: "home",
+        },
+        {
+            label: <Link to="/contacts">Contacts</Link>,
+            key: "contacts",
+        }
+
+    ]
+
+    if (!isUserLoggedIn) {
+        menuItems.push({
+            label: <Link to="/login">Log In</Link>,
+            key: "login",
+            style: { marginLeft: 'auto' },
+        });
+    } else {
+        menuItems.push({
+            label: <Avatar style={{ backgroundColor: '#c5c4c4' }} size={32} icon={<UserOutlined />} />,
+            key: "user-icon",
+            style: { marginLeft: 'auto'},
+        });
+    }
+    
     return(
         <>
             <Header className="header-container">
-                <div className="logo" />
-                    <Menu theme="dark" mode="horizontal" className="header__menu">
-                        <Link to="/" className="ant-menu-item">
-                            Home
-                        </Link>
-                        <div style={{ marginLeft: 'auto' }}>
-                            <Space>
-                                <Link to="/login" className="ant-menu-item">
-                                    Log In
-                                </Link>
-                                <Link to="/contacts" className="ant-menu-item">
-                                    Contacts
-                                </Link>
-                            </Space>
-                       </div>
-                    </Menu>
+                <Menu theme="dark" mode="horizontal" items={menuItems} />
             </Header>
         </>
     )

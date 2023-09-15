@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 import {Button, Form, Divider, Input} from 'antd';
 
 interface FormValues {
@@ -7,8 +8,9 @@ interface FormValues {
 }
 
 const LoginForm:React.FC = () => {
+    const navigate = useNavigate();
     const [form] = Form.useForm<FormValues>();
-    const [submittable, setSubmittable] = React.useState(false);
+    const [submittable, setSubmittable] = useState(false);
     const values = Form.useWatch([], form);
 
     useEffect(() => {
@@ -20,6 +22,7 @@ const LoginForm:React.FC = () => {
 
     const handleSubmit = (values:FormValues) => {
         console.log(values);
+        form.resetFields();
     }
 
     return(
@@ -54,7 +57,7 @@ const LoginForm:React.FC = () => {
                     <Input.Password placeholder="Password" />
                 </Form.Item>
                 <Button
-                    style={{ marginTop: '20px'}}
+                    style={{ marginTop: '20px', marginBottom: '20px'}}
                     type="primary"
                     htmlType="submit"
                     block
@@ -64,6 +67,7 @@ const LoginForm:React.FC = () => {
                     Log in
                 </Button>
             </Form>
+            <Button onClick={() => navigate("/")}  type="text" block>Go Back</Button>
         </div>
     )
 }
