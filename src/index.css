@@ -20,13 +20,12 @@ body {
 .login-page__container {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   padding: 0 10px;
 }
 
 .login-form_container {
   padding: 4em;
-  margin-top: 10vw;
   background-color: #fff;
 }
 .ant-menu-item {

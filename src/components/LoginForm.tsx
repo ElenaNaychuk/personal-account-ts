@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from "react";
-import { useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {Button, Form, Divider, Input} from 'antd';
+import {useStore} from "../mobx/store";
+import Credentials from "../domain/Credentials";
+import {contactsPagePath} from "../App";
 
 interface FormValues {
     email?: string;
@@ -9,8 +12,12 @@ interface FormValues {
 
 const LoginForm:React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    console.log(location);
+    const { userStore } = useStore();
     const [form] = Form.useForm<FormValues>();
     const [submittable, setSubmittable] = useState(false);
+    const [error, setError] = useState('');
     const values = Form.useWatch([], form);
 
     useEffect(() => {
@@ -20,14 +27,21 @@ const LoginForm:React.FC = () => {
         );
     }, [values]);
 
-    const handleSubmit = (values:FormValues) => {
-        console.log(values);
-        form.resetFields();
+    const handleSubmit = async (values:FormValues) => {
+        const success = await userStore.loginUser(new Credentials(values.email as string, values.password as string));
+        if(!success) {
+            setError("Неверный email или пароль.");
+            return;
+        }else {
+            form.resetFields();
+            navigate(contactsPagePath);
+        }
     }
 
     return(
         <div className="login-form_container">
             <Divider>Log In</Divider>
+            <p>{error}</p>
             <Form
                 form={form}
                 layout="vertical"
@@ -43,7 +57,7 @@ const LoginForm:React.FC = () => {
                         message: 'Некорректный email!'
                     }]}
                 >
-                    <Input placeholder="Email" />
+                    <Input placeholder="Email" size="large"/>
                 </Form.Item>
                 <Form.Item
                     label="Password"
@@ -54,7 +68,7 @@ const LoginForm:React.FC = () => {
                         message: 'Минимальная длина 8 символов!'
                     }]}
                 >
-                    <Input.Password placeholder="Password" />
+                    <Input.Password placeholder="Password"  size="large"/>
                 </Form.Item>
                 <Button
                     style={{ marginTop: '20px', marginBottom: '20px'}}
