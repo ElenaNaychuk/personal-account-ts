@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {observer} from "mobx-react"
 import {HeaderComponent} from "../components/Header";
 import {Divider} from "antd";
@@ -16,7 +16,7 @@ const ContactPage: React.FC = observer(() => {
     return (
         <div className="contacts-page__container">
             <HeaderComponent/>
-            <div style={{padding: '3em'}}>
+            <div style={{padding:'3em', paddingTop: '1em'}}>
                 <Divider style={{fontSize: '24px'}}>Your contacts</Divider>
                 <ContactTable/>
             </div>

@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Button, Form, Divider, Input} from 'antd';
 import {useStore} from "../mobx/store";
 import Credentials from "../domain/Credentials";
-import {contactsPagePath} from "../App";
 
 interface FormValues {
     email?: string;
@@ -12,8 +11,6 @@ interface FormValues {
 
 const LoginForm:React.FC = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-    console.log(location);
     const { userStore } = useStore();
     const [form] = Form.useForm<FormValues>();
     const [submittable, setSubmittable] = useState(false);
@@ -34,7 +31,7 @@ const LoginForm:React.FC = () => {
             return;
         }else {
             form.resetFields();
-            navigate(contactsPagePath);
+            navigate(-1);
         }
     }
 

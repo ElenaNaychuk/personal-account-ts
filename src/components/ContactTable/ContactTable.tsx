@@ -1,54 +1,59 @@
 import React, {useEffect, useState} from "react";
-import {Form, Popconfirm, Table, Typography} from "antd";
+import {Button, Form, Popconfirm, Table, Typography} from "antd";
 import {EditableCell} from "./EditableCell";
 import {useStore} from "../../mobx/store";
-import {IContact} from "../../domain/IContact";
+import {IContactUpdate} from "../../domain/IContact";
 import {observer} from "mobx-react";
 
-const ContactTable:React.FC = observer(() => {
-    const {userStore} = useStore();
+const ContactTable: React.FC = observer(() => {
+    const {contactStore} = useStore();
     const [form] = Form.useForm();
+    const [newRow, setNewRow] = useState<IContactUpdate | null>(null);
     const [editingKey, setEditingKey] = useState<null | number>(null);
 
-    useEffect(()=>{
+    useEffect(() => {
         const getUserContacts = async () => {
-            await userStore.loadUserContacts();
+            await contactStore.loadUserContacts();
         }
         getUserContacts();
     }, [])
 
-    const isEditing = (record: IContact) => record.id === editingKey;
+    const isEditing = (record: IContactUpdate) => record.id === editingKey;
 
-    const edit = (record: Partial<IContact> & { id: React.Key }) => {
-        form.setFieldsValue({ name: '', age: '', address: '', ...record });
+    const edit = (record: IContactUpdate) => {
+        form.setFieldsValue({firstName: '', phone: '', address: '', ...record});
         setEditingKey(record.id);
     };
 
-    const cancel = () => {
+    const finishEditing = () => {
         setEditingKey(null);
+        setNewRow(null);
+    };
+
+    const cancel = () => {
+        finishEditing();
     };
 
     const save = async (key: React.Key) => {
         try {
-            // const row = (await form.validateFields()) as IContact;
-            // const newData = [...contacts];
-            // const index = newData.findIndex((item) => key === item.id);
-            // if (index > -1) {
-            //     const item = newData[index];
-            //     newData.splice(index, 1, {
-            //         ...item,
-            //         ...row,
-            //     });
-            //     setContacts(newData);
-            //     setEditingKey(null);
-            // } else {
-            //     newData.push(row);
-            //     setContacts(newData);
-            //     setEditingKey(null);
-            // }
+            const row = (await form.validateFields()) as IContactUpdate;
+            const index = contactStore.getUserContacts().findIndex((item) => key === item.id);
+            if (index >= 0) {
+                const item = contactStore.getUserContacts()[index];
+                await contactStore.updateContact({...item, ...row});
+            } else {
+                await contactStore.addContact({...row});
+            }
+            finishEditing();
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
+    };
+
+    const handleAdd = () => {
+        setNewRow({id: 0});
+        setEditingKey(0);
+        form.setFieldsValue({firstName: "", phone: "", address: ""});
     };
 
     const columns = [
@@ -73,12 +78,15 @@ const ContactTable:React.FC = observer(() => {
         {
             title: 'operation',
             dataIndex: 'operation',
-            render: (_: any, record: IContact) => {
+            render: (_: any, record: IContactUpdate) => {
                 const editable = isEditing(record);
                 return editable
                     ? (
                         <span>
-                            <Typography.Link onClick={() => save(record.id)} style={{ marginRight: 8 }}>
+                            <Typography.Link
+                                onClick={() => save(record.id)}
+                                style={{marginRight: 8}}
+                            >
                                 Save
                             </Typography.Link>
                             <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
@@ -86,13 +94,10 @@ const ContactTable:React.FC = observer(() => {
                             </Popconfirm>
                         </span>
                     ) : (
-                        <Typography.Link
-                            // disabled={editingKey !== 0}
-                            onClick={() => edit(record)}
-                        >
+                        <Typography.Link onClick={() => edit(record)}>
                             Edit
                         </Typography.Link>
-                );
+                    );
             },
         },
     ];
@@ -103,24 +108,28 @@ const ContactTable:React.FC = observer(() => {
         }
         return {
             ...col,
-            onCell: (record: IContact) => ({
+            onCell: (record: IContactUpdate) => ({
                 record,
-                inputType: col.dataIndex === 'age' ? 'number' : 'text',
+                inputType: 'text',
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
             }),
         };
     });
+
+    if(contactStore.isLoading) {
+        return <p>Loading...</p>
+    }
     return (
         <Form form={form} component={false}>
+            <Button onClick={handleAdd} type="primary" style={{marginBottom: 16}}>
+                Add a contact
+            </Button>
             <Table
-                components={{body: {
-                        cell: EditableCell,
-                    },
-                }}
+                components={{body: {cell: EditableCell}}}
                 bordered
-                dataSource={userStore.getUserContacts()}
+                dataSource={newRow ? [...contactStore.getUserContacts(), newRow] : contactStore.getUserContacts()}
                 rowKey="id"
                 columns={mergedColumns}
                 rowClassName="editable-row"

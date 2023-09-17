@@ -6,11 +6,6 @@
       "password": "12345789"
     },
     {
-      "id": "FpEx0JlIq5a5mAoWnwBi3gscovj1",
-      "email": "daria@example.com",
-      "password": "12345678"
-    },
-    {
       "id": "2lmBsczcobOymLrXnczZt7F4FKy1",
       "email": "alisa@example.com",
       "password": "92345678"
@@ -20,79 +15,70 @@
     {
       "id": 1,
       "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
-      "firstName": "Андрей",
-      "lastName": "Данилов",
-      "address": "Москва, ул. Толстого 2",
+      "name": "Андрей",
+      "address": "Москва, ул. Толстого 1",
       "phone": "+7978123456"
     },
     {
       "id": 2,
       "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
-      "firstName": "Дмитрий",
-      "lastName": "Бычков",
+      "name": "Дмитрий",
       "address": "Москва, ул. Толстого 2",
       "phone": "+7978123456"
     },
     {
       "id": 3,
       "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
-      "firstName": "Алиса",
-      "lastName": "Егорова",
+      "name": "Алиса",
       "address": "Москва, ул. Толстого 2",
       "phone": "+7978123456"
     },
     {
       "id": 4,
       "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
-      "firstName": "Иван",
-      "lastName": "Смирнов",
+      "name": "Иван",
       "address": "Москва, ул. Толстого 2",
       "phone": "+7978123456"
     },
     {
       "id": 5,
       "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
-      "firstName": "Дарья",
-      "lastName": "Букина",
+      "name": "Дарья",
       "address": "Москва, ул. Толстого 2",
       "phone": "+7978123456"
     },
     {
       "id": 6,
       "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
-      "firstName": "Роман",
-      "lastName": "Авдеев",
+      "name": "Роман",
       "address": "Москва, ул. Толстого 2",
-      "phone": "+7978123456"
+      "phone": "+7978123458"
     },
     {
       "id": 7,
-      "userId": "123",
-      "firstName": "Анна",
-      "lastName": "Тимофеева ",
+      "userId": "0AymGUdtbHcftRsQQOwi8V2vmhE2",
+      "name": "Анна",
       "address": "Москва, ул. Толстого 2",
       "phone": "+7978123456"
     },
     {
       "id": 8,
-      "userId": "123",
-      "firstName": "Анотолий",
-      "lastName": "Самошин",
+      "userId": "0AymGUdtbHcftRsQQOwi8V2vmhE2",
+      "name": "Анотолий",
       "address": "Москва, ул. Толстого 2",
       "phone": "+7978123456"
     },
     {
       "id": 9,
-      "userId": "123",
-      "firstName": "Никита",
-      "lastName": "Колесов",
+      "userId": "0AymGUdtbHcftRsQQOwi8V2vmhE2",
+      "name": "Никита",
       "address": "Москва, ул. Толстого 2",
       "phone": "+7978123456"
     },
     {
       "id": 10,
-      "userId": "123",
-      "firstName": "Елена",
+      "userId": "0AymGUdtbHcftRsQQOwi8V2vmhE2",
+      "name": "Елена",
       "lastName": "Калашова",
       "address": "Москва, ул. Толстого 2",
       "phone": "+7978123456"
