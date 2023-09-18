@@ -21,35 +21,48 @@ class ContactStore {
         })
     }
 
-    getUserContacts = () => {
-        return this.contacts;
-    }
-
-    updateContact = async (contactUpdate: IContactUpdate) => {
-        await contactService.updateContact(contactUpdate);
-        runInAction(() => {
-            const contact = this.contacts.find(item => item.id === contactUpdate.id);
-            if (!contact) {
-                return;
-            }
-            Object.assign(contact, contactUpdate);
-        });
-    }
-
-    addContact = async (newContact: IContactInsert) => {
-        const result = await contactService.addContact(newContact);
+    addContact = async (contact: IContactInsert):Promise<boolean> => {
+        const {success, newContact} = await contactService.addContact(contact);
         this.isLoading = true;
 
         runInAction(() => {
-            if (result.success) {
-                this.contacts.push(result.newContact)
-            } else {
-                alert('error');
-                console.log(result);//todo
+            if (success) {
+                if (newContact) {
+                    this.contacts.push(newContact)
+                }
             }
             this.isLoading = false;
         });
 
+        return success;
+    }
+
+    updateContact = async (contactUpdate: IContactUpdate):Promise<boolean> => {
+        const {success} = await contactService.updateContact(contactUpdate);
+
+        runInAction(() => {
+            if(success) {
+                const contact = this.contacts.find(item => item.id === contactUpdate.id);
+                if (!contact) {
+                    return;
+                }
+                Object.assign(contact, contactUpdate);
+            }
+        });
+
+        return success;
+    }
+
+    deleteContact = async (contact:IContactUpdate):Promise<boolean> => {
+        const {success} = await contactService.deleteContact(contact);
+
+        runInAction(()=> {
+            if (success) {
+                this.contacts = this.contacts.filter(item => item.id !== contact.id);
+            }
+        })
+
+        return success;
     }
 }
 

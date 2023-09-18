@@ -7,11 +7,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.App {
+  min-height: 100vh;
+  background-image: url('./assets/images/white-background.jpg');
+  background-size: cover;
+}
 
 .main-container {
   padding: 50px;
   height: calc(100vh - 164px);
 }
+
+.error-page__container,
 .login-page__container {
   height: 100vh;
 }

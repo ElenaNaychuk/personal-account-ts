@@ -2,11 +2,10 @@ import React from "react";
 import {Form, Input, InputNumber} from "antd";
 import {IContact} from "../../domain/IContact";
 
-
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     editing: boolean;
     dataIndex: string;
-    title: any;
+    title: string;
     inputType: 'number' | 'text';
     record: IContact;
     index: number;

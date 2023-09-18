@@ -13,13 +13,6 @@
   ],
   "contacts": [
     {
-      "id": 1,
-      "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
-      "name": "Андрей",
-      "address": "Москва, ул. Толстого 1",
-      "phone": "+7978123456"
-    },
-    {
       "id": 2,
       "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
       "name": "Дмитрий",
@@ -46,13 +39,6 @@
       "name": "Дарья",
       "address": "Москва, ул. Толстого 2",
       "phone": "+7978123456"
-    },
-    {
-      "id": 6,
-      "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
-      "name": "Роман",
-      "address": "Москва, ул. Толстого 2",
-      "phone": "+7978123458"
     },
     {
       "id": 7,
@@ -82,6 +68,13 @@
       "lastName": "Калашова",
       "address": "Москва, ул. Толстого 2",
       "phone": "+7978123456"
+    },
+    {
+      "name": "Морина",
+      "phone": "+7(978)851-17-78",
+      "address": "Москва, ул. Горького 3",
+      "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
+      "id": 11
     }
   ]
 }

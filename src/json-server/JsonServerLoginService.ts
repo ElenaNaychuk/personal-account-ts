@@ -34,8 +34,5 @@ class JsonServerLoginService implements ILoginService {
     isLoggedIn(): boolean {
         return this.token!==null;
     }
-
-    getUserContacts = () => {
-    }
 }
 export {JsonServerLoginService};

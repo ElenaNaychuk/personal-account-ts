@@ -1,13 +1,13 @@
 export interface IContact {
     id: number;
     userId: string;
-    firstName: string;
+    name: string;
     phone: string;
     address: string;
 }
 
 export interface IContactInsert { //todo  в меcтах использования заменить на Partel
-    firstName?: string;
+    name?: string;
     phone?: string;
     address?: string;
 }

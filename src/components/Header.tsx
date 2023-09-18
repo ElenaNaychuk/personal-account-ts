@@ -1,11 +1,11 @@
-import React, {useState} from "react";
-import {Layout, Menu, MenuProps, Avatar} from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import React from "react";
+import {Layout, Menu, MenuProps} from 'antd';
 import {Link} from "react-router-dom";
+import {useStore} from "../mobx/store";
 const { Header } = Layout;
 
 const HeaderComponent:React.FC = () => {
-    const [isUserLoggedIn, setUserLoggedIn] = useState(false);
+    const {userStore} = useStore();
 
     const menuItems: MenuProps['items']  = [
         {
@@ -19,7 +19,7 @@ const HeaderComponent:React.FC = () => {
 
     ]
 
-    if (!isUserLoggedIn) {
+    if (!userStore.isLoggedUser()) {
         menuItems.push({
             label: <Link to="/login">Log In</Link>,
             key: "login",
@@ -27,7 +27,7 @@ const HeaderComponent:React.FC = () => {
         });
     } else {
         menuItems.push({
-            label: <Avatar style={{ backgroundColor: '#c5c4c4' }} size={32} icon={<UserOutlined />} />,
+            label: <Link to="/login" onClick={()=>{localStorage.removeItem("token")}}>Log Out</Link>,
             key: "user-icon",
             style: { marginLeft: 'auto'},
         });
