@@ -1,10 +1,8 @@
-import {IContact, IContactInsert, IContactUpdate} from "../domain/IContact";
+import {IContact, IContactUpdate} from "../domain/IContact";
 import {makeAutoObservable, runInAction} from "mobx";
-import {JsonServerUserService} from "../json-server/JsonServerUserService";
-import {JsonServerContactService} from "../json-server/JsonServerContactService";
+import {JsonServerContactRepository} from "../json-server/JsonServerContactRepository";
 
-const userService = new JsonServerUserService();
-const contactService = new JsonServerContactService();
+const contactRepository = new JsonServerContactRepository();
 
 class ContactStore {
     contacts: IContact[] = [];
@@ -14,31 +12,31 @@ class ContactStore {
         makeAutoObservable(this)
     }
 
-    loadUserContacts = async () => {
-        const contacts = await userService.getUserContacts();
+    loadContacts = async () => {
+        const contacts = await contactRepository.getContacts();
         runInAction(() => {
             this.contacts = contacts;
         })
     }
 
-    addContact = async (contact: IContactInsert):Promise<boolean> => {
-        const {success, newContact} = await contactService.addContact(contact);
+    addContact = async (contact: Partial<IContact>):Promise<boolean> => {
         this.isLoading = true;
+        const {success, newContact} = await contactRepository.addContact(contact);
 
         runInAction(() => {
+            this.isLoading = false;
             if (success) {
                 if (newContact) {
                     this.contacts.push(newContact)
                 }
             }
-            this.isLoading = false;
         });
 
         return success;
     }
 
     updateContact = async (contactUpdate: IContactUpdate):Promise<boolean> => {
-        const {success} = await contactService.updateContact(contactUpdate);
+        const {success} = await contactRepository.updateContact(contactUpdate);
 
         runInAction(() => {
             if(success) {
@@ -54,7 +52,7 @@ class ContactStore {
     }
 
     deleteContact = async (contact:IContactUpdate):Promise<boolean> => {
-        const {success} = await contactService.deleteContact(contact);
+        const {success} = await contactRepository.deleteContact(contact);
 
         runInAction(()=> {
             if (success) {

@@ -11,7 +11,7 @@ interface FormValues {
 
 const LoginForm:React.FC = () => {
     const navigate = useNavigate();
-    const { userStore } = useStore();
+    const { authStore } = useStore();
     const [form] = Form.useForm<FormValues>();
     const [submittable, setSubmittable] = useState(false);
     const [error, setError] = useState('');
@@ -25,7 +25,7 @@ const LoginForm:React.FC = () => {
     }, [values]);
 
     const handleSubmit = async (values:FormValues) => {
-        const success = await userStore.loginUser(new Credentials(values.email as string, values.password as string));
+        const success = await authStore.loginUser(new Credentials(values.email as string, values.password as string));
         if(!success) {
             setError("Неверный email или пароль.");
             return;

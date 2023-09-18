@@ -2,10 +2,11 @@ import React from "react";
 import {Layout, Menu, MenuProps} from 'antd';
 import {Link} from "react-router-dom";
 import {useStore} from "../mobx/store";
+import {observer} from "mobx-react";
 const { Header } = Layout;
 
-const HeaderComponent:React.FC = () => {
-    const {userStore} = useStore();
+const HeaderComponent:React.FC = observer(() => {
+    const {authStore} = useStore();
 
     const menuItems: MenuProps['items']  = [
         {
@@ -16,10 +17,9 @@ const HeaderComponent:React.FC = () => {
             label: <Link to="/contacts">Contacts</Link>,
             key: "contacts",
         }
-
     ]
 
-    if (!userStore.isLoggedUser()) {
+    if (!authStore.isLoggedIn()) {
         menuItems.push({
             label: <Link to="/login">Log In</Link>,
             key: "login",
@@ -27,12 +27,12 @@ const HeaderComponent:React.FC = () => {
         });
     } else {
         menuItems.push({
-            label: <Link to="/login" onClick={()=>{localStorage.removeItem("token")}}>Log Out</Link>,
+            label: <Link to="/" onClick={authStore.logOut}>Log Out</Link>,
             key: "user-icon",
             style: { marginLeft: 'auto'},
         });
     }
-    
+
     return(
         <>
             <Header className="header-container">
@@ -40,5 +40,5 @@ const HeaderComponent:React.FC = () => {
             </Header>
         </>
     )
-}
+})
 export {HeaderComponent};

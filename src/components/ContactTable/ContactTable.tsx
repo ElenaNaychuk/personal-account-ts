@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Form, Table, Typography, Modal } from "antd";
+import {Button, Form, Modal, Table, Typography} from "antd";
 import {EditableCell} from "./EditableCell";
 import {useStore} from "../../mobx/store";
 import {IContactUpdate} from "../../domain/IContact";
@@ -15,62 +15,59 @@ const ContactTable: React.FC = observer(() => {
     const [editingKey, setEditingKey] = useState<null | number>(null);
 
     useEffect(() => {
-        const getUserContacts = async () => {
-            await contactStore.loadUserContacts();
-        }
-        getUserContacts();
+        contactStore.loadContacts();
     }, [])
 
     const isEditing = (record: IContactUpdate) => record.id === editingKey;
 
-    const showErrorMessage = ( text:string):void => {
+    const showErrorMessage = (text: string): void => {
         Modal.error({
             title: "Error",
             content: `Не удалось ${text} контакт! Попробуйте ещё раз.`,
         })
     }
 
-    const edit = (record: IContactUpdate):void => {
+    const edit = (record: IContactUpdate): void => {
         form.setFieldsValue({name: '', phone: '', address: '', ...record});
         setEditingKey(record.id);
     };
 
-    const finishEditing = ():void => {
+    const finishEditing = (): void => {
         setEditingKey(null);
         setNewRow(null);
     };
 
-    const cancel = ():void => {
+    const cancel = (): void => {
         finishEditing();
     };
 
-    const handleAdd = ():void => {
+    const handleAdd = (): void => {
         setNewRow({id: 0});
         setEditingKey(0);
         form.setFieldsValue({name: "", phone: "", address: ""});
     };
 
-    const save = async (key: React.Key):Promise<void> => {
+    const save = async (key: React.Key): Promise<void> => {
         const row = (await form.validateFields()) as IContactUpdate;
         const index = contactStore.contacts.findIndex((item) => key === item.id);
         if (index >= 0) {
             const item = contactStore.contacts[index];
             const success = await contactStore.updateContact({...item, ...row});
-            if(!success) {
+            if (!success) {
                 showErrorMessage("обновить");
             }
         } else {
             const success = await contactStore.addContact({...row});
-            if(!success) {
+            if (!success) {
                 showErrorMessage("сохранить");
             }
         }
         finishEditing();
     };
 
-    const handleDelete = async (record: IContactUpdate):Promise<void> => {
+    const handleDelete = async (record: IContactUpdate): Promise<void> => {
         const success = await contactStore.deleteContact(record);
-        if(!success) {
+        if (!success) {
             showErrorMessage("удалить");
         }
     };
@@ -100,8 +97,14 @@ const ContactTable: React.FC = observer(() => {
             render: (_: React.HTMLAttributes<HTMLElement>, record: IContactUpdate) => {
                 const editable = isEditing(record);
                 return (
-                    <div style={{display: "flex", justifyContent:"space-between"}}>
-                        <EditButtonComponent editable={editable} record={record} onSave={save} onEdit={edit} onCancel={cancel}/>
+                    <div style={{display: "flex", justifyContent: "space-between"}}>
+                        <EditButtonComponent
+                            editable={editable}
+                            record={record}
+                            onSave={save}
+                            onEdit={edit}
+                            onCancel={cancel}
+                        />
                         <Typography.Link onClick={() => handleDelete(record)}>
                             Delete
                         </Typography.Link>
@@ -126,24 +129,21 @@ const ContactTable: React.FC = observer(() => {
             }),
         };
     });
+    const findContact = (inputValue: string) => {} //in progress
     const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
 
-    const findContact = (inputValue:string) => {
-
-
-    }
     return (
         <Form form={form} component={false}>
-            <div style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
+            <div style={{display: "flex", justifyContent: "space-between", width: "100%"}}>
                 <Button onClick={handleAdd} type="primary" style={{marginBottom: 16}}>
                     Add a contact
                 </Button>
-                <Search
-                    placeholder="Search..."
-                    onSearch={onSearch}
-                    style={{maxWidth: "50%"}}
-                    enterButton
-                />
+                {/*<Search*/}
+                {/*    placeholder="Search..."*/}
+                {/*    onSearch={onSearch}*/}
+                {/*    style={{maxWidth: "50%"}}*/}
+                {/*    enterButton*/}
+                {/*/>*/}
             </div>
             <Table
                 components={{body: {cell: EditableCell}}}

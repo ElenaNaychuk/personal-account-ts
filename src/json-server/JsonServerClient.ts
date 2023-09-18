@@ -4,6 +4,8 @@ const SERVER_URL = 'http://localhost:3001';
 
 
 export default class JsonServerClient {
+    //todo универсальный метод реквест
+    //todo: фейк клиент декоратор добавляющий фейковый метод логина, выделить общий интерфейс
     async login(email: string, password: string): Promise<{ success: boolean, user?: IUser, token?: string }> {
         const searchParams = new URLSearchParams({email, password});
 

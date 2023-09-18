@@ -34,5 +34,9 @@ class JsonServerLoginService implements ILoginService {
     isLoggedIn(): boolean {
         return this.token!==null;
     }
+
+    logOut =() => {
+        localStorage.removeItem('token');
+    }
 }
 export {JsonServerLoginService};

@@ -9,9 +9,9 @@ import {loginPagePath} from "../App";
 import {Spinner} from "../components/Spinner";
 
 const ContactPage: React.FC = observer(() => {
-    const {userStore, contactStore} = useStore();
+    const {authStore, contactStore} = useStore();
 
-    if (!userStore.isLoggedUser()) {
+    if (!authStore.isLoggedIn()) {
         return <Navigate to={loginPagePath} replace={true}/>;
     }
     if(contactStore.isLoading) {

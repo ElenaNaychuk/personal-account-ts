@@ -8,8 +8,8 @@ import {IUser} from "../domain/IUser";
 const backendClient = new JsonServerClient();
 const userLoginService:ILoginService = new JsonServerLoginService(backendClient);
 
-class UserStore {
-    user: IUser | undefined;
+class AuthStore {
+    // user: IUser | undefined; пока нигде не используется
     isLoading = false;
 
     constructor() {
@@ -17,21 +17,27 @@ class UserStore {
     }
 
     loginUser = async (userData: Credentials) => {
-        const {success, user} = await userLoginService.login(userData);
         this.isLoading = true;
+        const {success/*, user*/} = await userLoginService.login(userData);
 
         runInAction(() => {
-            if( success) {
-                this.user = user;
-            }
+            this.isLoading = false;
+            // if( success) {
+            //     this.user = user;
+            // }
         });
 
         return success;
     };
 
-    isLoggedUser = () => {
+    isLoggedIn = () => {
         return userLoginService.isLoggedIn();
+    }
+
+    logOut = () => {
+        userLoginService.logOut();
+        // this.user = undefined;
     }
 }
 
-export {UserStore}
+export {AuthStore}

@@ -1,9 +1,9 @@
-import {UserStore} from "./UserStore";
+import {AuthStore} from "./AuthStore";
 import { createContext, useContext } from "react";
 import {ContactStore} from "./ContactStore";
 
 const store = {
-    userStore: new UserStore,
+    authStore: new AuthStore,
     contactStore: new ContactStore(),
 }
 

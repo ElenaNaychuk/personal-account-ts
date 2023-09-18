@@ -11,6 +11,7 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "antd": "^5.9.0",
+    "concurrently": "^8.2.1",
     "json-server": "^0.17.3",
     "mobx": "^6.10.2",
     "mobx-react": "^9.0.1",
@@ -23,7 +24,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"npm run dev\" \"npm run server\"",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
