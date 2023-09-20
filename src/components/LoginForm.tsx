@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Button, Form, Divider, Input} from 'antd';
+import {Button, Divider, Form, Input} from 'antd';
 import {useStore} from "../mobx/store";
 import Credentials from "../domain/Credentials";
 
@@ -9,9 +9,9 @@ interface FormValues {
     password?: string;
 }
 
-const LoginForm:React.FC = () => {
+const LoginForm: React.FC = () => {
     const navigate = useNavigate();
-    const { authStore } = useStore();
+    const {authStore} = useStore();
     const [form] = Form.useForm<FormValues>();
     const [submittable, setSubmittable] = useState(false);
     const [error, setError] = useState('');
@@ -24,18 +24,18 @@ const LoginForm:React.FC = () => {
         );
     }, [values]);
 
-    const handleSubmit = async (values:FormValues) => {
+    const handleSubmit = async (values: FormValues) => {
         const success = await authStore.loginUser(new Credentials(values.email as string, values.password as string));
-        if(!success) {
+        if (!success) {
             setError("Неверный email или пароль.");
             return;
-        }else {
+        } else {
             form.resetFields();
-            navigate(-1);
+            navigate("/contacts");
         }
     }
 
-    return(
+    return (
         <div className="login-form_container">
             <Divider>Log In</Divider>
             <p>{error}</p>
@@ -65,10 +65,10 @@ const LoginForm:React.FC = () => {
                         message: 'Минимальная длина 8 символов!'
                     }]}
                 >
-                    <Input.Password placeholder="Password"  size="large"/>
+                    <Input.Password placeholder="Password" size="large"/>
                 </Form.Item>
                 <Button
-                    style={{ marginTop: '20px', marginBottom: '20px'}}
+                    style={{marginTop: '20px', marginBottom: '20px'}}
                     type="primary"
                     htmlType="submit"
                     block
@@ -78,7 +78,7 @@ const LoginForm:React.FC = () => {
                     Log in
                 </Button>
             </Form>
-            <Button onClick={() => navigate("/")}  type="text" block>Go Back</Button>
+            <Button onClick={() => navigate(-1)} type="text" block>Go Back</Button>
         </div>
     )
 }

@@ -6,16 +6,12 @@ import {useStore} from "../mobx/store";
 import {ContactTable} from "../components/ContactTable/ContactTable";
 import {Navigate} from "react-router-dom";
 import {loginPagePath} from "../App";
-import {Spinner} from "../components/Spinner";
 
 const ContactPage: React.FC = observer(() => {
-    const {authStore, contactStore} = useStore();
+    const {authStore} = useStore();
 
     if (!authStore.isLoggedIn()) {
         return <Navigate to={loginPagePath} replace={true}/>;
-    }
-    if(contactStore.isLoading) {
-        return <Spinner/>
     }
     return (
         <div className="contacts-page__container">

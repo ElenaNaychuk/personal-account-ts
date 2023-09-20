@@ -1,46 +1,27 @@
-import {IUser} from "../domain/IUser";
+export interface IJsonServerClient {
+    request(url: string, method?: string, body?: any): Promise<any | void>;
+}
 
-const SERVER_URL = 'http://localhost:3001';
+export class JsonServerClient implements IJsonServerClient {
+    private readonly serverUrl: string
 
-
-export default class JsonServerClient {
-    //todo универсальный метод реквест
-    //todo: фейк клиент декоратор добавляющий фейковый метод логина, выделить общий интерфейс
-    async login(email: string, password: string): Promise<{ success: boolean, user?: IUser, token?: string }> {
-        const searchParams = new URLSearchParams({email, password});
-
-        try {
-            const response = await fetch(`${SERVER_URL}/users?${searchParams}`);
-            const [user] = await response.json();
-            const token = user.id;
-            return {
-                success: true,
-                user,
-                token,
-            }
-        } catch (error) {
-            console.log(`Error: ${error}.`);
-            return {
-                success: false,
-            }
-
-        }
+    constructor(serverUrl: string) {
+        this.serverUrl = serverUrl;
     }
 
-//
-//     isLoggedIn(): boolean {
-//         return this.token !== null;
-//     }
-//
-//     getUserContacts = () => {
-//     }
-//
-//     request({url, method, body}: { url: string; method?: string; body?: any }) { //todo any
-//         if (url === '/login' && method === 'POST') { // todo: implement real backend client with real secure token etc
-//
-//         }
-//         const response = await fetch(`${SERVER_URL}${url}`);
-//         const [promise] = response.json();
-//         await [promise]
-//     }
+    async request(url: string, method: string = 'GET', body?: any): Promise<any | void> {
+        const response = await fetch(`${this.serverUrl}${url}`, {
+            method,
+            ...(body !== undefined && {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            }),
+        });
+        if (['UPDATE', 'DELETE'].includes(method)) {
+            return;
+        }
+        return await response.json();
+    }
 }

@@ -1,24 +1,29 @@
-import React, {useEffect, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {Button, Form, Modal, Table, Typography} from "antd";
 import {EditableCell} from "./EditableCell";
 import {useStore} from "../../mobx/store";
-import {IContactUpdate} from "../../domain/IContact";
 import {observer} from "mobx-react";
 import {EditButtonComponent} from "./EditButtonComponent";
 import Search from "antd/es/input/Search";
-import {SearchProps} from "antd/lib/input";
+import {IContact, IContactUpdate} from "../../domain/IContact";
+import {Spinner} from "../Spinner";
 
 const ContactTable: React.FC = observer(() => {
     const {contactStore} = useStore();
     const [form] = Form.useForm();
-    const [newRow, setNewRow] = useState<IContactUpdate | null>(null);
+    const [newRow, setNewRow] = useState<Partial<IContact> & { id: number } | null>(null);
     const [editingKey, setEditingKey] = useState<null | number>(null);
+    const [contacts, setContacts] = useState<IContact[]>([]);
+
+    useEffect(() => {
+        setContacts(contactStore.contacts);
+    }, [contactStore.contacts])
 
     useEffect(() => {
         contactStore.loadContacts();
     }, [])
 
-    const isEditing = (record: IContactUpdate) => record.id === editingKey;
+    const isEditing = (record: Partial<IContact> & { id: number }) => record.id === editingKey;
 
     const showErrorMessage = (text: string): void => {
         Modal.error({
@@ -27,7 +32,7 @@ const ContactTable: React.FC = observer(() => {
         })
     }
 
-    const edit = (record: IContactUpdate): void => {
+    const edit = (record: Partial<IContact> & { id: number }): void => {
         form.setFieldsValue({name: '', phone: '', address: '', ...record});
         setEditingKey(record.id);
     };
@@ -48,10 +53,10 @@ const ContactTable: React.FC = observer(() => {
     };
 
     const save = async (key: React.Key): Promise<void> => {
-        const row = (await form.validateFields()) as IContactUpdate;
-        const index = contactStore.contacts.findIndex((item) => key === item.id);
+        const row = (await form.validateFields()) as Partial<IContact> & { id: number };
+        const index = contacts.findIndex((item) => key === item.id);
         if (index >= 0) {
-            const item = contactStore.contacts[index];
+            const item = contacts[index];
             const success = await contactStore.updateContact({...item, ...row});
             if (!success) {
                 showErrorMessage("обновить");
@@ -63,9 +68,10 @@ const ContactTable: React.FC = observer(() => {
             }
         }
         finishEditing();
+        setContacts(contactStore.contacts);
     };
 
-    const handleDelete = async (record: IContactUpdate): Promise<void> => {
+    const handleDelete = async (record: Partial<IContact> & { id: number }): Promise<void> => {
         const success = await contactStore.deleteContact(record);
         if (!success) {
             showErrorMessage("удалить");
@@ -120,7 +126,7 @@ const ContactTable: React.FC = observer(() => {
         }
         return {
             ...col,
-            onCell: (record: IContactUpdate) => ({
+            onCell: (record: Partial<IContact> & { id: number }) => ({
                 record,
                 inputType: 'text',
                 dataIndex: col.dataIndex,
@@ -129,26 +135,45 @@ const ContactTable: React.FC = observer(() => {
             }),
         };
     });
-    const findContact = (inputValue: string) => {} //in progress
-    const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
+
+    const findContact = (inputValue: string) => {
+        setContacts(contactStore.contacts.filter(contact => {
+            inputValue = inputValue.toLowerCase();
+            return [contact.name, contact.phone, contact.address]
+                .some(contactProp => contactProp.toLowerCase().includes(inputValue));
+        }));
+    }
+
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const inputValue = event.target.value;
+        if (inputValue !== '') {
+            findContact(inputValue);
+        } else {
+            setContacts(contactStore.contacts)
+        }
+    };
+
+    if (!contactStore.contacts.length) {
+        return <Spinner/>
+    }
 
     return (
         <Form form={form} component={false}>
             <div style={{display: "flex", justifyContent: "space-between", width: "100%"}}>
-                <Button onClick={handleAdd} type="primary" style={{marginBottom: 16}}>
+                <Button onClick={handleAdd} type="primary" style={{marginBottom: 16, marginRight: 5}}>
                     Add a contact
                 </Button>
-                {/*<Search*/}
-                {/*    placeholder="Search..."*/}
-                {/*    onSearch={onSearch}*/}
-                {/*    style={{maxWidth: "50%"}}*/}
-                {/*    enterButton*/}
-                {/*/>*/}
+                <Search
+                    placeholder="Search..."
+                    style={{maxWidth: "50%"}}
+                    enterButton
+                    onChange={handleInputChange}
+                />
             </div>
             <Table
                 components={{body: {cell: EditableCell}}}
                 bordered
-                dataSource={newRow ? [...contactStore.contacts, newRow] : contactStore.contacts}
+                dataSource={newRow ? [...contacts, newRow] : contacts}
                 rowKey="id"
                 columns={mergedColumns}
                 rowClassName="editable-row"

@@ -1,30 +1,36 @@
-import {IContact, IContactUpdate} from "../domain/IContact";
+import {IContact} from "../domain/IContact";
 import {makeAutoObservable, runInAction} from "mobx";
-import {JsonServerContactRepository} from "../json-server/JsonServerContactRepository";
-
-const contactRepository = new JsonServerContactRepository();
+import {contactRepository} from "./store";
 
 class ContactStore {
     contacts: IContact[] = [];
+    isLoaded = false;
     isLoading = false;
 
     constructor() {
-        makeAutoObservable(this)
+        makeAutoObservable(this);
     }
 
-    loadContacts = async () => {
+    loadContacts = async (): Promise<void> => {
+        if (this.isLoaded || this.isLoading) {
+            return;
+        }
+        this.setLoading(true);
+
         const contacts = await contactRepository.getContacts();
+
+        console.log(contacts)
+        this.setLoading(false);
+        this.setLoaded(true);
+
         runInAction(() => {
             this.contacts = contacts;
         })
     }
 
-    addContact = async (contact: Partial<IContact>):Promise<boolean> => {
-        this.isLoading = true;
+    addContact = async (contact: Partial<IContact>): Promise<boolean> => {
         const {success, newContact} = await contactRepository.addContact(contact);
-
         runInAction(() => {
-            this.isLoading = false;
             if (success) {
                 if (newContact) {
                     this.contacts.push(newContact)
@@ -35,11 +41,10 @@ class ContactStore {
         return success;
     }
 
-    updateContact = async (contactUpdate: IContactUpdate):Promise<boolean> => {
+    updateContact = async (contactUpdate: Partial<IContact> & { id: number }): Promise<boolean> => {
         const {success} = await contactRepository.updateContact(contactUpdate);
-
         runInAction(() => {
-            if(success) {
+            if (success) {
                 const contact = this.contacts.find(item => item.id === contactUpdate.id);
                 if (!contact) {
                     return;
@@ -51,16 +56,23 @@ class ContactStore {
         return success;
     }
 
-    deleteContact = async (contact:IContactUpdate):Promise<boolean> => {
+    deleteContact = async (contact: Partial<IContact> & { id: number }): Promise<boolean> => {
         const {success} = await contactRepository.deleteContact(contact);
-
-        runInAction(()=> {
+        runInAction(() => {
             if (success) {
                 this.contacts = this.contacts.filter(item => item.id !== contact.id);
             }
         })
 
         return success;
+    }
+
+    private setLoaded(value: boolean): void {
+        this.isLoaded = value;
+    }
+
+    private setLoading(value: boolean): void {
+        this.isLoaded = value;
     }
 }
 

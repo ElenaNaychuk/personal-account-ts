@@ -1,12 +1,12 @@
 import {ILoginService} from "../domain/ILoginService";
 import Credentials from "../domain/Credentials";
-import JsonServerClient from "./JsonServerClient";
+import {IJsonServerClient} from "./JsonServerClient";
 import {IUser} from "../domain/IUser";
 
 class JsonServerLoginService implements ILoginService {
-    private backend: JsonServerClient;
+    private backend: IJsonServerClient;
 
-    constructor(backend: JsonServerClient) {
+    constructor(backend: IJsonServerClient) {
         this.backend = backend;
     }
 
@@ -22,21 +22,24 @@ class JsonServerLoginService implements ILoginService {
         localStorage.setItem('token', token);
     }
 
-    async login(creds: Credentials): Promise<{ success: boolean; user?: IUser }> {
-        const {success, user, token} = await this.backend.login(creds.email, creds.password);
-        if(success) {
-            this.token = token || null;
-            return {success, user};
+    async logIn(creds: Credentials): Promise<{ success: boolean; user?: IUser }> {
+        try {
+            const {accessToken} = await this.backend.request('/login', 'POST', creds);
+            this.token = accessToken || null;
+            return {success: true};
+        } catch (error) {
+            console.log(`Error: ${error}`);
+            return {success: false};
         }
-        return {success};
     }
 
     isLoggedIn(): boolean {
-        return this.token!==null;
+        return this.token !== null;
     }
 
-    logOut =() => {
+    logOut = () => {
         localStorage.removeItem('token');
     }
 }
+
 export {JsonServerLoginService};

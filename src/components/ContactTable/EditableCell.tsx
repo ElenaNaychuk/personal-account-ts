@@ -1,5 +1,5 @@
 import React from "react";
-import {Form, Input, InputNumber} from "antd";
+import {Form, Input} from "antd";
 import {IContact} from "../../domain/IContact";
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -22,7 +22,6 @@ const EditableCell: React.FC<EditableCellProps> = ({
    children,
    ...restProps
 }) => {
-    const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
 
     return (
         <td {...restProps}>
@@ -35,7 +34,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
                             message: `Please Input ${title}!`,
                         }]}
                 >
-                    {inputNode}
+                    <Input />
                 </Form.Item>
             ) : (
                 children

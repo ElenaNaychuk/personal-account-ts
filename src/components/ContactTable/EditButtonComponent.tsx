@@ -1,12 +1,12 @@
-import {IContactUpdate} from "../../domain/IContact";
+import {IContact} from "../../domain/IContact";
 import React from "react";
 import {Popconfirm, Typography} from "antd";
 
 interface IEditComponentProps {
     editable:boolean;
-    record:IContactUpdate;
+    record:Partial<IContact> & { id: number };
     onSave:(id: number) => void;
-    onEdit:(record: IContactUpdate) => void;
+    onEdit:(record: Partial<IContact> & { id: number }) => void;
     onCancel:() => void;
 }
 const EditButtonComponent:React.FC<IEditComponentProps> = ({editable, record, onSave, onEdit, onCancel}) => {

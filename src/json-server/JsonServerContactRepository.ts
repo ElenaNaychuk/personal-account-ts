@@ -1,74 +1,53 @@
-import {IContact, IContactUpdate} from "../domain/IContact";
+import {IContact} from "../domain/IContact";
 import {IContactRepository} from "../domain/IContactRepository";
-
-const SERVER_URL = 'http://localhost:3001';
+import {IJsonServerClient} from "./JsonServerClient";
 
 class JsonServerContactRepository implements IContactRepository {
+    private backend: IJsonServerClient;
 
-    //todo: выделить контакт репозиторий интерфейс
-//todo: ensure at backend (or in backend client implementation) that user cannot edit someone else's contacts
-// or any other data
-
-    getContacts = async ():Promise<IContact[]> => {//todo: move to contact repo
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${SERVER_URL}/contacts?userId=${token}`);
-        return await response.json();
+    constructor(backend: IJsonServerClient) {
+        this.backend = backend;
     }
 
-    addContact = async (contact:Partial<IContact>): Promise<{success:boolean, newContact?:IContact}> => {
+    getContacts = async (): Promise<IContact[]> => {//todo: move to contact repo
         try {
-            const userId = localStorage.getItem("token")
-            const response = await fetch(`${SERVER_URL}/contacts`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({...contact, userId}),
-                }
-            );
-            const newContact = await response.json();
-            return {
-                success:true,
-                newContact,
-            };
-        }catch (error) {
+            const token = localStorage.getItem("token"); //имитация получения данных по токену юзера
+            return await this.backend.request(`/contacts?userId=${token}`);
+        } catch (error) {
+            return [];
+        }
+    }
+
+    addContact = async (contact: Partial<IContact>): Promise<{ success: boolean, newContact?: IContact }> => {
+        const token = localStorage.getItem("token"); //имитация получения данных по токену юзера
+        try {
+            const newContact = await this.backend.request("/contacts", "POST", {...contact, userId: token});
+            return {success: true, newContact};
+        } catch (error) {
             console.log(`Error: ${error}`);
             return {success: false};
         }
     }
 
-    updateContact = async (contact:IContactUpdate):Promise<{success:boolean}> => {
+    updateContact = async (contact: Partial<IContact> & { id: number }): Promise<{ success: boolean }> => {
         try {
-            await fetch(`${SERVER_URL}/contacts/${contact.id}`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(contact),
-                }
-            );
-            return {success:true};
-        }catch (error) {
+            await this.backend.request(`/contacts/${contact.id}`, "PATCH", contact);
+            return {success: true};
+        } catch (error) {
             console.log(`Error: ${error}`);
-            return {success:false};
+            return {success: false};
         }
     }
 
-    deleteContact = async (contact:IContactUpdate):Promise<{success:boolean}> => {
+    deleteContact = async (contact: Partial<IContact> & { id: number }): Promise<{ success: boolean }> => {
         try {
-            await fetch(`${SERVER_URL}/contacts/${contact.id}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(contact),
-                }
-            );
-            return {success:true};
-        }catch (error) {
+            await this.backend.request(`/contacts/${contact.id}`, "DELETE", contact);
+            return {success: true};
+        } catch (error) {
             console.log(`Error: ${error}`);
-            return {success:false};
+            return {success: false};
         }
     }
 }
+
 export {JsonServerContactRepository};
