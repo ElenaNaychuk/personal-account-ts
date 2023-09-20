@@ -1,6 +1,7 @@
 import {makeAutoObservable} from "mobx";
 import Credentials from "../domain/Credentials";
 import {userLoginService} from "./store";
+import {ContactStore} from "./ContactStore";
 
 class AuthStore {
     constructor() {
@@ -18,6 +19,8 @@ class AuthStore {
 
     logOut = () => {
         userLoginService.logOut();
+        const contactStore = new ContactStore();
+        contactStore.contacts = [];
     }
 }
 
