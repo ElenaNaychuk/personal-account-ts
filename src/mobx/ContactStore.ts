@@ -19,7 +19,6 @@ class ContactStore {
 
         const contacts = await contactRepository.getContacts();
 
-        console.log(contacts)
         this.setLoading(false);
         this.setLoaded(true);
 

@@ -9,7 +9,7 @@ class JsonServerContactRepository implements IContactRepository {
         this.backend = backend;
     }
 
-    getContacts = async (): Promise<IContact[]> => {//todo: move to contact repo
+    getContacts = async (): Promise<IContact[]> => {
         try {
             const token = localStorage.getItem("token"); //имитация получения данных по токену юзера
             return await this.backend.request(`/contacts?userId=${token}`);
