@@ -18,7 +18,7 @@ const ContactTable: React.FC = observer(() => {
         name:'',
         phone:'',
         address:''
-    })
+    });
 
     useEffect(() => {
         setContacts(contactStore.contacts);
@@ -38,7 +38,8 @@ const ContactTable: React.FC = observer(() => {
     }
 
     const edit = (record: Partial<IContact> & { id: number }): void => {
-        form.setFieldsValue({name: '', phone: '', address: '', ...record});
+        form.setFieldsValue({...formFields, ...record});
+        setFormFields({...formFields, ...record});
         setEditingKey(record.id);
     };
 
@@ -54,7 +55,7 @@ const ContactTable: React.FC = observer(() => {
     const handleAdd = (): void => {
         setNewRow({id: 0});
         setEditingKey(0);
-        form.setFieldsValue({name: "", phone: "", address: ""});
+        form.setFieldsValue({...formFields});
     };
 
     const save = async (key: React.Key): Promise<void> => {
@@ -67,13 +68,17 @@ const ContactTable: React.FC = observer(() => {
                 showErrorMessage("обновить");
             }
         } else {
-            const success = await contactStore.addContact({...row});
+            const success = await contactStore.addContact(row);
             if (!success) {
                 showErrorMessage("сохранить");
             }
         }
         finishEditing();
-        setContacts(contactStore.contacts);
+        setFormFields({
+            name:'',
+            phone:'',
+            address:''
+        })
     };
 
     const handleDelete = async (record: Partial<IContact> & { id: number }): Promise<void> => {
@@ -123,7 +128,7 @@ const ContactTable: React.FC = observer(() => {
                             onCancel={cancel}
                             formFields={formFields}
                         />
-                        <Typography.Link onClick={() => handleDelete(record)}>
+                        <Typography.Link onClick={() => handleDelete(record)} disabled={editingKey===0}>
                             Delete
                         </Typography.Link>
                     </div>
@@ -165,10 +170,6 @@ const ContactTable: React.FC = observer(() => {
         }
     };
 
-    if (contactStore.isLoading) {
-        return <Spinner/>
-    }
-
     return (
         <Form
             form={form}
@@ -196,6 +197,7 @@ const ContactTable: React.FC = observer(() => {
                 pagination={{
                     onChange: cancel,
                 }}
+                loading={contactStore.isLoading}
             />
         </Form>
     );

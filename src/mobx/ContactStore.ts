@@ -28,7 +28,10 @@ class ContactStore {
     }
 
     addContact = async (contact: Partial<IContact>): Promise<boolean> => {
+        this.setLoading(true);
         const {success, newContact} = await contactRepository.addContact(contact);
+        this.setLoading(false);
+
         runInAction(() => {
             if (success) {
                 if (newContact) {
@@ -41,7 +44,10 @@ class ContactStore {
     }
 
     updateContact = async (contactUpdate: Partial<IContact> & { id: number }): Promise<boolean> => {
+        this.setLoading(true);
         const {success} = await contactRepository.updateContact(contactUpdate);
+        this.setLoading(false);
+
         runInAction(() => {
             if (success) {
                 const contact = this.contacts.find(item => item.id === contactUpdate.id);
@@ -56,7 +62,10 @@ class ContactStore {
     }
 
     deleteContact = async (contact: Partial<IContact> & { id: number }): Promise<boolean> => {
+        this.setLoading(true);
         const {success} = await contactRepository.deleteContact(contact);
+        this.setLoading(false);
+
         runInAction(() => {
             if (success) {
                 this.contacts = this.contacts.filter(item => item.id !== contact.id);
