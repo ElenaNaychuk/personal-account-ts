@@ -14,6 +14,11 @@ const ContactTable: React.FC = observer(() => {
     const [newRow, setNewRow] = useState<Partial<IContact> & { id: number } | null>(null);
     const [editingKey, setEditingKey] = useState<null | number>(null);
     const [contacts, setContacts] = useState<IContact[]>([]);
+    const [formFields, setFormFields] = useState({
+        name:'',
+        phone:'',
+        address:''
+    })
 
     useEffect(() => {
         setContacts(contactStore.contacts);
@@ -84,18 +89,24 @@ const ContactTable: React.FC = observer(() => {
             dataIndex: 'name',
             width: '25%',
             editable: true,
+            textWrap: 'word-break',
+            ellipsis: true,
         },
         {
             title: 'Phone',
             dataIndex: 'phone',
             width: '25%',
             editable: true,
+            textWrap: 'word-break',
+            ellipsis: true,
         },
         {
             title: 'Address',
             dataIndex: 'address',
             width: '25%',
             editable: true,
+            textWrap: 'word-break',
+            ellipsis: true,
         },
         {
             title: 'Action',
@@ -110,6 +121,7 @@ const ContactTable: React.FC = observer(() => {
                             onSave={save}
                             onEdit={edit}
                             onCancel={cancel}
+                            formFields={formFields}
                         />
                         <Typography.Link onClick={() => handleDelete(record)}>
                             Delete
@@ -153,12 +165,16 @@ const ContactTable: React.FC = observer(() => {
         }
     };
 
-    if (!contactStore.contacts.length) {
+    if (contactStore.isLoading) {
         return <Spinner/>
     }
 
     return (
-        <Form form={form} component={false}>
+        <Form
+            form={form}
+            component={false}
+            onValuesChange={(changedValues) => setFormFields({...formFields, ...changedValues})}
+        >
             <div style={{display: "flex", justifyContent: "space-between", width: "100%"}}>
                 <Button onClick={handleAdd} type="primary" style={{marginBottom: 16, marginRight: 5}}>
                     Add a contact

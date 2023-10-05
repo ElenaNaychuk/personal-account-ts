@@ -71,7 +71,7 @@ class ContactStore {
     }
 
     private setLoading(value: boolean): void {
-        this.isLoaded = value;
+        this.isLoading = value;
     }
 }
 

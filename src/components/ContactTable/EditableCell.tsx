@@ -22,7 +22,6 @@ const EditableCell: React.FC<EditableCellProps> = ({
    children,
    ...restProps
 }) => {
-
     return (
         <td {...restProps}>
             {editing ? (

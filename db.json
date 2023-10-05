@@ -85,7 +85,7 @@
     {
       "name": "Елена",
       "phone": "+79999999999",
-      "address": "Москва, ул. Толстого 3",
+      "address": "Москва, ул. Толстого 2",
       "userId": "0AymGUdtbHcftRsQQOwi8V2vmhE2",
       "id": 18
     },
@@ -102,6 +102,20 @@
       "address": "Москва, ул. Толстого 1",
       "userId": "2lmBsczcobOymLrXnczZt7F4FKy1",
       "id": 20
+    },
+    {
+      "name": "Катя Руднева",
+      "phone": "+79788511732",
+      "address": "Москва, ул. Толстого 3",
+      "userId": "0AymGUdtbHcftRsQQOwi8V2vmhE2",
+      "id": 21
+    },
+    {
+      "name": "Никита",
+      "phone": "+79788511734",
+      "address": "Москва, ул. Толстого 3",
+      "userId": "0AymGUdtbHcftRsQQOwi8V2vmhE2",
+      "id": 22
     }
   ]
 }
